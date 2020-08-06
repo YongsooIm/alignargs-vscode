@@ -10,16 +10,67 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:alignargs.helloWorld"
+		"onCommand:alignargs.alignargs"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "alignargs.helloWorld",
-				"title": "Hello World"
+				"command": "alignargs.alignargs",
+				"title": "Align Args"
 			}
-		]
+		  ],
+		  "menus": {
+			"editor/context": [
+			  {
+				"command": "alignargs.alignargs",
+				"when": "editorHasSelection"
+			  }
+			]
+		  },		
+		"configuration": {
+			"title": "Align Args",
+			"properties": {
+				"alignargs.rightAlignDecimal": {
+					"type": "boolean",
+					"default": true,
+					"description": "Right align decimal values"
+				},
+				"alignargs.trimTrail": {
+					"type": "boolean",
+					"default": true,
+					"description": "true : Remove both sides whitespace in argument\nfalse : Remove only left side whitespace in argument"
+				},
+				"alignargs.formatHex": {
+					"type": "boolean",
+					"default": true,
+					"description": "ex) 0XabU -> 0xABu"
+				},
+				"alignargs.padType": {
+					"type": "string",
+					"default": "space",
+					"enum": [
+						"space",
+						"tab"
+					],
+					"description": "Pad with space or tab(width 4)"
+				},
+				"alignargs.replaceArg": {
+					"type": "object",
+					"description": "Replace argument 'Item' -> 'Value'",
+					"scope": "resource",
+					"default":{
+						"t": "TRUE",
+						"T": "TRUE",
+						"f": "FALSE",
+						"F" : "FALSE"
+					},
+					"additionalProperties": {
+						"type" : "string"
+					}
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -41,5 +92,7 @@
 		"mocha": "^7.1.2",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.3.0"
-	}
+	},
+	"publisher": "yongsooim",
+	"repository": "https://github.com/YongsooIm/vscode-alignargs"
 }
