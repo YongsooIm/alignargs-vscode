@@ -1,6 +1,7 @@
 import { FuncCall } from "./../class/FuncCall";
 import { ParseFunc } from "./ParseFunc";
 import { Config } from "./../class/Config"
+import { ParseRefComment } from "./ParseRefComment";
 
 export function DoAlign(input: string, config: Config): string {
   var parsedLines: FuncCall[] = [];
@@ -10,9 +11,25 @@ export function DoAlign(input: string, config: Config): string {
   var outputLines: string[] = [];
   var findingRefComment = true;
   var lines = input.split(/\r?\n/);
+  var parsedRefComment: string[] = [];
 
   lines.forEach((line, index) => {
+
+    if(findingRefComment){
+      parsedRefComment = ParseRefComment(line);
+
+      if(parsedRefComment.length !== 0){
+        findingRefComment = false;
+        maxArgLengthArr = parsedRefComment.map(arg=>arg.length);
+        return;
+      }
+    }
+
     parsedLines[index] = ParseFunc(line);
+    if(parsedLines[index].funcName != ''){
+      findingRefComment = false;
+    }
+
 
     var currentParsedLine = parsedLines[index];
 
@@ -53,6 +70,11 @@ export function DoAlign(input: string, config: Config): string {
 
   var joinString = ' , ';
 
+
+  if(parsedRefComment.length != 0){
+    outputLines[0] = ' '.repeat(minIndentLength) + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.map((arg,index)=>arg.padEnd(maxArgLengthArr[index])).join(' , ') + '*/';
+  }
+
   parsedLines.forEach(function (line, index) {
     if (line.funcName === '') {
       outputLines.push(lines[index]);
@@ -67,9 +89,9 @@ export function DoAlign(input: string, config: Config): string {
             return arg.padEnd(maxArgLengthArr[argIndex], ' ');
           }
         } else { // pad type is tab
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           const tabSize = 4;
-          /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           if (argIndex === 0){ // first argument, calculate function name length
             var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex])/4)*4;
@@ -88,12 +110,12 @@ export function DoAlign(input: string, config: Config): string {
               return arg.padStart(targetWidth, ' ') + '\t';
             }
             else {
-              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinString.length) / 4) + 1);  // after second argument including join string (', ')
+              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinString.length) / 4) + 1);  // after second argument 
             }
           }
         }
       });
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       if (config.padType === 'space')
         outputLines.push(' '.repeat(minIndentLength) + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinString) + ');' + line.comment);
