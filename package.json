@@ -88,6 +88,6 @@
 		"typescript": "^3.9.7",
 		"vscode-test": "^1.3.0"
 	},
-	"publisher": "Yongsoo Im",
+	"publisher": "yongsooim",
 	"repository": "https://github.com/YongsooIm/vscode-alignargs"
 }
