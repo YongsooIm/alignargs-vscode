@@ -19,7 +19,7 @@ export function ParseFunc(line: string): FuncCall {
   var funcName = '';
   var args: string[] = [];
   var comment = '';
-  var argIndex = 0;
+  var argIndex = -1;
   var curr: string;
   var state = STATE.INDENT;
 
@@ -57,7 +57,7 @@ export function ParseFunc(line: string): FuncCall {
 
       case STATE.ARG_START:
         if (curr.match(/\w/)) {  // alphanumeric
-          args[argIndex] = curr;
+          args[++argIndex] = curr;
           state = STATE.ARG_MIDDLE;
         } else if (curr === ')') {
           state = STATE.COMMENT_START;
@@ -69,7 +69,6 @@ export function ParseFunc(line: string): FuncCall {
         if (curr.match(/[\w_]/)) { // alphanumeric, underscore
           args[argIndex] += curr;
         } else if (curr === ',') {
-          argIndex++;
           state = STATE.ARG_START;
         } else if (curr.match(/\s/)) {  // whitespace
           args[argIndex] += curr;
@@ -82,7 +81,6 @@ export function ParseFunc(line: string): FuncCall {
 
       case STATE.ARG_END:
         if (curr === ',') {
-          argIndex++;
           state = STATE.ARG_START;
         } else if (curr === ')') {
           state = STATE.COMMENT_START;
@@ -119,7 +117,7 @@ export function ParseFunc(line: string): FuncCall {
     }
   }
 
-  if (state === STATE.DONE || state === STATE.ARG_START || state === STATE.ARG_MIDDLE || state === STATE.ARG_END) {
+  if (state === STATE.DONE && argIndex !== -1) {
     return new FuncCall(indent, funcName, args, comment);
   } else {
     return new FuncCall('', '', [], '');

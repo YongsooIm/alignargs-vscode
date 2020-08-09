@@ -1,32 +1,36 @@
 import { FuncCall } from "./../class/FuncCall";
 import { ParseFunc } from "./ParseFunc";
-import { Config } from "./../class/Config"
+import { Config } from "./../class/Config";
 import { ParseRefComment } from "./ParseRefComment";
 
 export function DoAlign(input: string, config: Config): string {
   var parsedLines: FuncCall[] = [];
   var maxArgLengthArr = [0];
-  var minIndentLength = 100;
+  var minIndent = ' '.repeat(100);
   var maxFuncNameLength = 0;
   var outputLines: string[] = [];
   var findingRefComment = true;
   var lines = input.split(/\r?\n/);
   var parsedRefComment: string[] = [];
+  var refCommentLineIndex = -1;
 
+  // parsing part
   lines.forEach((line, index) => {
 
-    if(findingRefComment){
+    if (findingRefComment) {
       parsedRefComment = ParseRefComment(line);
 
-      if(parsedRefComment.length !== 0){
+      if (parsedRefComment.length !== 0) {
         findingRefComment = false;
-        maxArgLengthArr = parsedRefComment.map(arg=>arg.length);
+        maxArgLengthArr = parsedRefComment.map(arg => arg.length);
+        refCommentLineIndex = index;
+        parsedLines[index] = new FuncCall('', '', [], '');
         return;
       }
     }
 
     parsedLines[index] = ParseFunc(line);
-    if(parsedLines[index].funcName != ''){
+    if (parsedLines[index].funcName !== '') {
       findingRefComment = false;
     }
 
@@ -34,8 +38,8 @@ export function DoAlign(input: string, config: Config): string {
     var currentParsedLine = parsedLines[index];
 
     if (currentParsedLine.funcName !== '') {
-      if (currentParsedLine.indent.length < minIndentLength) {
-        minIndentLength = currentParsedLine.indent.length;
+      if (currentParsedLine.indent.length < minIndent.length) {
+        minIndent = currentParsedLine.indent;
       }
 
       if (currentParsedLine.funcName.length > maxFuncNameLength) {  // calc max func name
@@ -56,7 +60,7 @@ export function DoAlign(input: string, config: Config): string {
 
         if (config.formatHex) { // check format hex option
           var temp = arg.trim().toUpperCase();
-          if (temp.match(/\b0[X][0-9A-F]+[U]?\b/)) {  // check hex expression
+          if (temp.match(/\b0X[0-9A-F]+[Uu]?\b/)) {  // check hex expression
             temp = temp.replace('X', 'x').replace('U', 'u');
             args[index] = args[index].replace(args[index].trim(), temp);
           }
@@ -68,14 +72,15 @@ export function DoAlign(input: string, config: Config): string {
     }
   });
 
-  var joinString = ' , ';
 
+  // building output part
+  var joinStringSpace = ' , ';
+  var joinStringTab = ', ';
 
-  if(parsedRefComment.length != 0){
-    outputLines[0] = ' '.repeat(minIndentLength) + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.map((arg,index)=>arg.padEnd(maxArgLengthArr[index])).join(' , ') + '*/';
-  }
 
   parsedLines.forEach(function (line, index) {
+
+    console.log(index);
     if (line.funcName === '') {
       outputLines.push(lines[index]);
     } else {
@@ -89,18 +94,18 @@ export function DoAlign(input: string, config: Config): string {
             return arg.padEnd(maxArgLengthArr[argIndex], ' ');
           }
         } else { // pad type is tab
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           const tabSize = 4;
 
-          if (argIndex === 0){ // first argument, calculate function name length
-            var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex])/4)*4;
+          if (argIndex === 0) { // first argument, calculate function name length
+            var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex]) / tabSize) * tabSize;
 
             if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
               return arg.padStart(targetWidth - maxFuncNameLength - 1, ' ') + '\t';
             }
             else {
-              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - maxFuncNameLength - 1) / 4) + 1);
+              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - maxFuncNameLength - 1) / tabSize) + 1);
             }
           }
           else {
@@ -110,24 +115,27 @@ export function DoAlign(input: string, config: Config): string {
               return arg.padStart(targetWidth, ' ') + '\t';
             }
             else {
-              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinString.length) / 4) + 1);  // after second argument 
+              return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinStringTab.length) / 4) + 1);  // after second argument 
             }
           }
         }
       });
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      if (config.padType === 'space')
-        outputLines.push(' '.repeat(minIndentLength) + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinString) + ');' + line.comment);
-
-      else
-        outputLines.push(' '.repeat(minIndentLength) + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinString) + ');' + line.comment);
-
+      if (config.padType === 'space') {
+        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringSpace) + ');' + line.comment);
+      } else {
+        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringTab) + ');' + line.comment);
+      }
+  
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  
   });
 
-  return outputLines.join('\r\n');
+  outputLines[refCommentLineIndex] = (minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ') + '*/');
+
+return outputLines.join('\r\n');
 }
 
 

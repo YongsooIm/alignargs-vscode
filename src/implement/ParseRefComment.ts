@@ -53,7 +53,7 @@ export function ParseRefComment(line: string): string[] { // returns args
         } else if (curr.match(/\s/)) { // whitespace
           state = STATE.ARG_END;
         } else if (curr === ',') {
-          state = STATE.ARG_START
+          state = STATE.ARG_START;
         } else if (curr === '*') {
           // comment end;
         }
@@ -69,8 +69,9 @@ export function ParseRefComment(line: string): string[] { // returns args
     }
   }
 
-  if (argIndex === 0)
+  if (state===STATE.FAIL) {
     return [];
-  else
+  } else {
     return args;
+  }
 }
