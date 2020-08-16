@@ -6,8 +6,8 @@ import { ParseRefComment } from "./ParseRefComment";
 export function DoAlign(input: string, config: Config): string {
   var parsedLines: FuncCall[] = [];
   var maxArgLengthArr = [0];
-  var minIndent = ' '.repeat(100);
-  var maxFuncNameLength = 0;
+  var minIndent = ' '.repeat(16);
+  var maxFuncNameLength = 1;
   var outputLines: string[] = [];
   var findingRefComment = true;
   var lines = input.split(/\r?\n/);
@@ -80,7 +80,6 @@ export function DoAlign(input: string, config: Config): string {
 
   parsedLines.forEach(function (line, index) {
 
-    console.log(index);
     if (line.funcName === '') {
       outputLines.push(lines[index]);
     } else {
@@ -133,7 +132,10 @@ export function DoAlign(input: string, config: Config): string {
   
   });
 
-  outputLines[refCommentLineIndex] = (minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ') + '*/');
+  if (parsedRefComment.length !== 0) {
+    outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + 
+    parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ').padEnd(minIndent.length + maxFuncNameLength + maxArgLengthArr.reduce((a, b) => a+b, 0), ' ') + ' */';
+}
 
 return outputLines.join('\r\n');
 }

@@ -56,7 +56,7 @@ export function ParseFunc(line: string): FuncCall {
         } break;                        // ignore whitespace
 
       case STATE.ARG_START:
-        if (curr.match(/\w/)) {  // alphanumeric
+        if (curr.match(/[\w\&]/)) {  // alphanumeric, ampersand
           args[++argIndex] = curr;
           state = STATE.ARG_MIDDLE;
         } else if (curr === ')') {

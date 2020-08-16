@@ -2,6 +2,7 @@
 	"name": "alignargs",
 	"displayName": "AlignArgs",
 	"description": "Align arguments of single line function calls",
+	"icon": "images/alignargsIcon.png",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.47.0"
