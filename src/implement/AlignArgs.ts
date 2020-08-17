@@ -11,7 +11,7 @@ export function DoAlign(input: string, config: Config): string {
   var outputLines: string[] = [];
   var findingRefComment = true;
   var lines = input.split(/\r?\n/);
-  var parsedRefComment: string[] = [];
+  var parsedRefComment: string[] = []; // only string of args
   var refCommentLineIndex = -1;
 
   // parsing part
@@ -133,8 +133,39 @@ export function DoAlign(input: string, config: Config): string {
   });
 
   if (parsedRefComment.length !== 0) {
-    outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + 
-    parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ').padEnd(minIndent.length + maxFuncNameLength + maxArgLengthArr.reduce((a, b) => a+b, 0), ' ') + ' */';
+    if (config.padType === 'space') {
+      outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + 
+      parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ').padEnd(minIndent.length + maxFuncNameLength + maxArgLengthArr.reduce((a, b) => a+b, 0), ' ') + ' */';  
+    } else{
+      parsedRefComment.forEach((arg, argIndex, args)=>{
+        const tabSize = 4;
+        if (argIndex === 0) { // first argument, calculate function name length
+
+          var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex]) / tabSize) * tabSize;
+
+          if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
+            args[argIndex] = arg.padStart(targetWidth - maxFuncNameLength - 1, ' ') + '\t';
+          }
+          else {
+            console.log(arg);
+            args[argIndex]  =  arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - maxFuncNameLength - 1) / tabSize) + 1);
+            console.log(args[argIndex] + 'end');
+          }
+        } else{
+          var targetWidth = Math.ceil(maxArgLengthArr[argIndex] / tabSize) * tabSize;  // target width 
+
+          if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
+            args[argIndex] = arg.padStart(targetWidth, ' ') + '\t';
+          }
+          else {
+            args[argIndex] = arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinStringTab.length) / 4) + 1);  // after second argument 
+          }
+        }
+      });
+      console.log(parsedRefComment);
+      outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.join(joinStringTab) + ' */';  
+
+    }
 }
 
 return outputLines.join('\r\n');

@@ -1,14 +1,14 @@
 {
 	"name": "alignargs",
-	"displayName": "AlignArgs",
-	"description": "Align arguments of single line function calls",
+	"displayName": "Align Args",
+	"description": "Align arguments in single line function calls",
 	"icon": "images/alignargsIcon.png",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
 	"categories": [
-		"Other"
+		"Formatters"
 	],
 	"activationEvents": [
 		"onCommand:alignargs.alignargs"
