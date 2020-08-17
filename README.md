@@ -14,11 +14,11 @@ Invalid types for argument : function call, string,
 1) Select function calls
 
 
-2-1) Open command pallete, type 'align args' and press enter.
+2-1. Open command pallete, type 'align args' and press enter.
 ![Demo](./images/commandpalette.gif?raw=true)
 
 
-2-2) Right click on selected text, and click 'align args'.
+2-2. Right click on selected text, and click 'align args'.
 ![Demo](./images/contextmenu.gif?raw=true)
 
 
