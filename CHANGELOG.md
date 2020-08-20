@@ -2,8 +2,11 @@
 
 All notable changes to the "alignargs" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [0.1.1]
+
+- Add semicolon tolerance
+
+## [0.1.0]
 
 - Initial release
