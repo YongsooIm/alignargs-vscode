@@ -92,17 +92,6 @@ export function ParseFunc(line: string): FuncCall {
         break;
 
       case STATE.COMMENT_START:
-        if (curr === ';') {
-          if (i === line.length - 1) {
-            state = STATE.DONE;
-          } else {
-            state = STATE.COMMENT;
-          }
-        } else if (curr.match(/\S/)) {
-          state = STATE.FAIL;
-        } break;
-
-      case STATE.COMMENT:
         comment = line.substr(i, line.length);
         state = STATE.DONE;
         break;
@@ -117,7 +106,7 @@ export function ParseFunc(line: string): FuncCall {
     }
   }
 
-  if (state === STATE.DONE && argIndex !== -1) {
+  if ((state === STATE.DONE || state === STATE.COMMENT_START) && argIndex !== -1) {
     return new FuncCall(indent, funcName, args, comment);
   } else {
     return new FuncCall('', '', [], '');

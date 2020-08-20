@@ -121,9 +121,9 @@ export function DoAlign(input: string, config: Config): string {
       });
 
       if (config.padType === 'space') {
-        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringSpace) + ');' + line.comment);
+        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringSpace) + ')' + line.comment);
       } else {
-        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringTab) + ');' + line.comment);
+        outputLines.push(minIndent + line.funcName.padEnd(maxFuncNameLength) + '(' + line.args.join(joinStringTab) + ')' + line.comment);
       }
   
     }
