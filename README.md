@@ -5,8 +5,8 @@ Align arguments in function calls.
 Works for c-style, single line, non-nested function calls.  
 ex) f(a, b, c);
 
-Valid types for argument : decimal expression, hex expression, identifier
-Invalid types for argument : function call, string, 
+Valid types for argument : decimal expression, hex expression, c identifier  
+Invalid types for argument : function call, quoted string 
 
 
 # Usage
@@ -21,6 +21,14 @@ Invalid types for argument : function call, string,
 2-2) Right click on selected text, and click 'align args'.
 ![Demo](./images/contextmenu.gif?raw=true)
 
+
+(optional) Reference comment line   
+You can list argument names in the first comment line.
+
+# Features
+Format hex ( 0XabU => 0xABu)
+Right align decimal
+Replace arguments
 
 ### 0.1.1
 Add semicolon tolerance
