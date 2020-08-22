@@ -9,14 +9,13 @@ Invalid expression for argument : function call, etc
 
 # Usage
 
-1) Select function calls
+Select function calls
 
-
-2-1) Open command pallete, type 'align args' and press enter.
+option 1) Open command palette, type 'align args' and press enter.
 ![Demo](./images/commandpalette.gif?raw=true)
 
 
-2-2) Right click on selected text, and click 'align args'.
+option 2) Right click on selected text, and click 'align args' on context menu.
 ![Demo](./images/contextmenu.gif?raw=true)
 
 
