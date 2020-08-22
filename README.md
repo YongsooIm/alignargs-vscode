@@ -3,10 +3,8 @@
 Align arguments in function calls.
 
 Works for c-style, single line, non-nested function calls.  
-ex) f(a, b, c);
 
-Valid expression for argument : decimal expression, hexadecimal expression, c identifier  
-Invalid expression for argument : function call, quoted string, operator, etc
+Invalid expression for argument : function call, etc
 
 
 # Usage
@@ -23,19 +21,9 @@ Invalid expression for argument : function call, quoted string, operator, etc
 
 
 (optional) Reference comment line   
-You can list argument names in the first comment line.
+You can list argument names in the first comment line which will align together.
 
 # Features
-Format hex ( 0XabU => 0xABu)
-Right align decimal
-Replace arguments
-
-
-
-
-### 0.1.1
-Add semicolon tolerance
-
-### 0.1.0
-
-Initial release
+Format hex ( 0XabU => 0xABu)  
+Right align decimal  
+Replace arguments  

@@ -112,17 +112,6 @@ export function ParseFunc(line: string): FuncCall {
           args[argIndex] += curr;
         } break;
 
-      case STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE:
-        if (curr === '\"'){
-          state = STATE.ARG_MIDDLE;
-          args[argIndex] += curr;
-        } else if (curr === '\\'){
-          state = STATE.ARG_MIDDLE_STRING_ESCAPE;
-          args[argIndex] += curr;
-        } else {
-          args[argIndex] += curr;
-        } break;
-
       case STATE.ARG_MIDDLE_STRING_ESCAPE:
         args[argIndex] += curr;
         break;
