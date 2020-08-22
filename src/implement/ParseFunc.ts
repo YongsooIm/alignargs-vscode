@@ -142,10 +142,14 @@ export function ParseFunc(line: string): FuncCall {
     }
   }
 
+  return new FuncCall(indent, funcName, args, comment);
+
+  /*
   if ((state === STATE.DONE || state === STATE.COMMENT_START) && argIndex !== -1) {
     return new FuncCall(indent, funcName, args, comment);
   } else {
     return new FuncCall('', '', [], '');
   }
+  */
 }
 
