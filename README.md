@@ -28,5 +28,5 @@ Right align decimal
 Replace arguments  
 
 # Known issue
-Parser is very greedy, it might not be accurate.
+Parser is very greedy, it might not be accurate.  
 Feel free to open an issue!
