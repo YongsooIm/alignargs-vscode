@@ -26,7 +26,3 @@ You can list argument names in the first comment line which will align together.
 Format hex ( 0XabU => 0xABu)  
 Right align decimal  
 Replace arguments  
-
-# Known issue
-Parser is very greedy, it might not be accurate.  
-Feel free to open an issue!

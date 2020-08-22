@@ -25,6 +25,7 @@ export function ParseFunc(line: string): FuncCall {
   var argIndex = -1;
   var curr: string;
   var state = STATE.INDENT;
+  var previousState = STATE.FAIL;
 
   for (var i = 0; i < line.length; i++) {
     curr = line.charAt(i);
@@ -95,6 +96,7 @@ export function ParseFunc(line: string): FuncCall {
           args[argIndex] += curr;
         } else if (curr === '\\'){
           state = STATE.ARG_MIDDLE_STRING_ESCAPE;
+          previousState = STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE;
           args[argIndex] += curr;
         } else {
           args[argIndex] += curr;
@@ -107,6 +109,7 @@ export function ParseFunc(line: string): FuncCall {
           args[argIndex] += curr;
         } else if (curr === '\\'){
           state = STATE.ARG_MIDDLE_STRING_ESCAPE;
+          previousState = STATE.ARG_MIDDLE_STRING_DOUBLE_QUOTE;
           args[argIndex] += curr;
         } else {
           args[argIndex] += curr;
@@ -114,6 +117,7 @@ export function ParseFunc(line: string): FuncCall {
 
       case STATE.ARG_MIDDLE_STRING_ESCAPE:
         args[argIndex] += curr;
+        state = previousState;
         break;
 
       case STATE.COMMENT_START:
@@ -131,7 +135,11 @@ export function ParseFunc(line: string): FuncCall {
     }
   }
 
-  return new FuncCall(indent, funcName, args, comment);
+  if(argIndex < 1){
+    return new FuncCall('', '', [], '');
+  } else {
+    return new FuncCall(indent, funcName, args, comment);
+  }
 
   /*
   if ((state === STATE.DONE || state === STATE.COMMENT_START) && argIndex !== -1) {
