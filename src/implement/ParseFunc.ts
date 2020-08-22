@@ -6,6 +6,9 @@ enum STATE {
   FUNC_NAME_END,
   ARG_START,
   ARG_MIDDLE,
+  ARG_MIDDLE_STRING_SINGLE_QUOTE,
+  ARG_MIDDLE_STRING_DOUBLE_QUOTE,
+  ARG_MIDDLE_STRING_ESCAPE,
   ARG_END,
   COMMENT_START,
   COMMENT,
@@ -56,39 +59,72 @@ export function ParseFunc(line: string): FuncCall {
         } break;                        // ignore whitespace
 
       case STATE.ARG_START:
-        if (curr.match(/[\w\&]/)) {  // alphanumeric, ampersand
+        if (curr === ')') {
+          state = STATE.COMMENT_START;
+        } else if(curr==='\''){
+          args[++argIndex] = curr;
+          state = STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE;
+        } else if(curr==='\"'){
+          args[++argIndex] = curr;
+          state = STATE.ARG_MIDDLE_STRING_DOUBLE_QUOTE;
+        } else {
           args[++argIndex] = curr;
           state = STATE.ARG_MIDDLE;
-        } else if (curr === ')') {
-          state = STATE.COMMENT_START;
-        } else if (curr.match(/\S/)) {  // non-whitespace
-          state = STATE.FAIL;
-        } break;                        // ignore whitespace
+        } break;
 
       case STATE.ARG_MIDDLE:
         if (curr.match(/[\w_]/)) { // alphanumeric, underscore
           args[argIndex] += curr;
         } else if (curr === ',') {
           state = STATE.ARG_START;
-        } else if (curr.match(/\s/)) {  // whitespace
-          args[argIndex] += curr;
-          state = STATE.ARG_END;
         } else if (curr === ')') {
           state = STATE.COMMENT_START;
+        } else if (curr === '\''){
+          state = STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE;
+          args[argIndex] += curr;
+        } else if (curr === '\"'){
+          state = STATE.ARG_MIDDLE_STRING_DOUBLE_QUOTE;
+          args[argIndex] += curr;
         } else {
-          state = STATE.FAIL;
+          args[argIndex] += curr;
         } break;
 
-      case STATE.ARG_END:
-        if (curr === ',') {
-          state = STATE.ARG_START;
-        } else if (curr === ')') {
-          state = STATE.COMMENT_START;
-        } else if (curr.match(/\s/)) {   // whitespace
+      case STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE:
+        if (curr === '\''){
+          state = STATE.ARG_MIDDLE;
+          args[argIndex] += curr;
+        } else if (curr === '\\'){
+          state = STATE.ARG_MIDDLE_STRING_ESCAPE;
           args[argIndex] += curr;
         } else {
-          state = STATE.FAIL;
-        }
+          args[argIndex] += curr;
+        } break;
+
+        
+      case STATE.ARG_MIDDLE_STRING_DOUBLE_QUOTE:
+        if (curr === '\"'){
+          state = STATE.ARG_MIDDLE;
+          args[argIndex] += curr;
+        } else if (curr === '\\'){
+          state = STATE.ARG_MIDDLE_STRING_ESCAPE;
+          args[argIndex] += curr;
+        } else {
+          args[argIndex] += curr;
+        } break;
+
+      case STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE:
+        if (curr === '\"'){
+          state = STATE.ARG_MIDDLE;
+          args[argIndex] += curr;
+        } else if (curr === '\\'){
+          state = STATE.ARG_MIDDLE_STRING_ESCAPE;
+          args[argIndex] += curr;
+        } else {
+          args[argIndex] += curr;
+        } break;
+
+      case STATE.ARG_MIDDLE_STRING_ESCAPE:
+        args[argIndex] += curr;
         break;
 
       case STATE.COMMENT_START:
