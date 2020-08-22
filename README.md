@@ -9,7 +9,7 @@ Invalid expression for argument : function call, etc
 
 # Usage
 
-Select function calls
+Select function calls, 
 
 option 1) Open command palette, type 'align args' and press enter.
 ![Demo](./images/commandpalette.gif?raw=true)
@@ -26,3 +26,7 @@ You can list argument names in the first comment line which will align together.
 Format hex ( 0XabU => 0xABu)  
 Right align decimal  
 Replace arguments  
+
+# Known issue
+Parser is very greedy, it might not be accurate.
+Feel free to open an issue!
