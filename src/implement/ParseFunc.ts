@@ -26,6 +26,7 @@ export function ParseFunc(line: string): FuncCall {
   var curr: string;
   var state = STATE.INDENT;
   var previousState = STATE.FAIL;
+  var funcCallDepth = 0;
 
   for (var i = 0; i < line.length; i++) {
     curr = line.charAt(i);
@@ -61,6 +62,7 @@ export function ParseFunc(line: string): FuncCall {
 
       case STATE.ARG_START:
         if (curr === ')') {
+          comment += ')';
           state = STATE.COMMENT_START;
         } else if(curr==='\''){
           args[++argIndex] = curr;
@@ -77,14 +79,27 @@ export function ParseFunc(line: string): FuncCall {
         if (curr.match(/[\w_]/)) { // alphanumeric, underscore
           args[argIndex] += curr;
         } else if (curr === ',') {
-          state = STATE.ARG_START;
+          if(funcCallDepth === 0){
+            state = STATE.ARG_START;
+          } else {
+            args[argIndex] += curr;
+          }
         } else if (curr === ')') {
-          state = STATE.COMMENT_START;
+          if(funcCallDepth === 0){
+            comment += ')';
+            state = STATE.COMMENT_START;
+          } else {
+            funcCallDepth--;
+            args[argIndex] += curr;
+          }
         } else if (curr === '\''){
           state = STATE.ARG_MIDDLE_STRING_SINGLE_QUOTE;
           args[argIndex] += curr;
         } else if (curr === '\"'){
           state = STATE.ARG_MIDDLE_STRING_DOUBLE_QUOTE;
+          args[argIndex] += curr;
+        } else if (curr === '('){
+          funcCallDepth++;
           args[argIndex] += curr;
         } else {
           args[argIndex] += curr;
@@ -121,7 +136,7 @@ export function ParseFunc(line: string): FuncCall {
         break;
 
       case STATE.COMMENT_START:
-        comment = line.substr(i, line.length);
+        comment += line.substr(i, line.length);
         state = STATE.DONE;
         break;
 
@@ -135,18 +150,9 @@ export function ParseFunc(line: string): FuncCall {
     }
   }
 
-  if(argIndex < 1){
+  if(argIndex === -1){
     return new FuncCall('', '', [], '');
   } else {
     return new FuncCall(indent, funcName, args, comment);
   }
-
-  /*
-  if ((state === STATE.DONE || state === STATE.COMMENT_START) && argIndex !== -1) {
-    return new FuncCall(indent, funcName, args, comment);
-  } else {
-    return new FuncCall('', '', [], '');
-  }
-  */
 }
-

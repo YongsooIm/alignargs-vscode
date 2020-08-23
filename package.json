@@ -53,7 +53,7 @@
 				},
 				"alignargs.replaceArg": {
 					"type": "object",
-					"description": "Replace argument 'Item' -> 'Value'",
+					"description": "Replace argument 'Key' -> 'Value'",
 					"scope": "resource",
 					"default": {
 						"t": "TRUE",

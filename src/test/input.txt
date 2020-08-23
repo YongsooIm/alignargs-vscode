@@ -1,28 +1,6 @@
-/*a, b, c*/
-
-func1(1, TRUE, TRUE, 0xFFu, 0x03u);
-func12(10, FALSE, FALSE, 0xFFu, 0x02u);
-func123(100, TRUE, TRUEaaaaa, 0xFFu, 0x00u);
-func1234(1000, TRUE, TRUE, 0xFFu, 0x00u);
-func12345(10000, TRUE, a, a, a);
-func12345f(100000, TRUE, b, b, bcd);
-func12345ff(1000000, TRUE, asdf, asdf, sadf);
-func12345fff(10000000, TRUE, asdf, sadf, adf);
-func12345ffff(100000000, TRUE,1	, 2,        3);
-func12345fffff(1000000000, TRUE,10	, 20,       30);
-func12345ffffff(10000, TRUE, asDF, ASDF, ASDF);
-func12345fffffff(10000, FALSE, asdgasdg, asdgasdg, sadgasdg);
-func12345ffffffff(10000, TRUE, asdgasdg, sadgasdg, asdgdasg);
-func12345fffffffff(10000, TRUE, asdgasdg, sadgasdg, asdgasdg);
-func12345ffffffffff(a, TRUE, a, asdgasg, sadgdsag);
-func12345ffffffffff(ab, FALSE, ab, asdgasdg, asdgasdg);
-func12345ffffffffff(abc, TRUE, abc);
-func12345ffffffffff(abcd, TRUE, abcd, asdgasdg, asdga);
-func12345ffffffffff(abcde, TRUE, abcdf, asdgasdg, asdgasdg);
-func12345ffffffffff(abcdef, TRUE, abcdfa, asdgasdg, asdgasdg);
-func12345ffffffffff(abcdefg, TRUE, abcdfaa, asdgasdg, asdgdasg);
-func12345ffffffffff(abcdefgh, TRUE, abcdfaaa);
-func12345ffffffffff(abcdefghi, TRUE, abcdfaaaa);
-func12345ffffffffff(acdefghiff, TRUE, abcdfaaaaa, asf, asf, asg	);
-func12345ffffffffff(aaasaaaaaaa, TRUE, abcdfaaaaaa, asf, fasf);
-func12345fffffffffff(aaasaaaaaaa, TRUE, abcdfaaaaaa, asf, fasf);
+/*arg1,arg2,arg3,long_name,arg4*/
+func(FALSE,1,0xABu,TRUE,SO);
+func1(TRUE,10,0xFFu,FALSE,SOMEVAL);
+func12(FALSE,100,0xABu,TRUE,SOMEVAL);
+func1(TRUE,1000,0xCDu,FALSE,SOMEVALU);
+func(FALSE,10000,0xEFu,TRUE,SOMEVALUE);

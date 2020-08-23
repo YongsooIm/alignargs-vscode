@@ -4,8 +4,7 @@ All notable changes to the "alignargs" extension will be documented in this file
 
 ## [0.1.2]
 
-- Parse text more greedy
-- Add support for string, operator
+- Add support for argument type : string, operator, function call
 
 ## [0.1.1]
 
