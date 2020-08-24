@@ -24,46 +24,33 @@ export function ParseRefComment(line: string): string[] { // returns args
         if (curr.match(/\s/)) { // whitespace
           indent += curr;
         } else if (curr === '/') {
+          args[-1] = '/';
           state = STATE.CHECK_COMMENT;
+        } else if (curr === '#') {  // for python compatibility
+          args[-1] = '#';
+          state = STATE.ARG_START;
         } else {
           state = STATE.FAIL;
         } break;
 
       case STATE.CHECK_COMMENT:
         if (curr === '/' || curr === '*') {
+          args[-1] += curr;
           state = STATE.ARG_START;
         } else {
           state = STATE.FAIL;
         } break;
 
       case STATE.ARG_START:
-        if (curr.match(/\w/)) {  // alphanumeric
-          args[++argIndex] = curr;
-          state = STATE.ARG_MIDDLE;
-        } else if (curr.match(/[\s(]/)) {  // ignore whitespace and '('
-          // Do nothing
-        } else {
-          state = STATE.FAIL;
-        }
+        args[++argIndex] = curr;
+        state = STATE.ARG_MIDDLE;
         break;
 
       case STATE.ARG_MIDDLE:
-        if (curr.match(/[\w_]/)) {  // alphanumeric, underscore
-          args[argIndex] += curr;
-        } else if (curr.match(/\s/)) { // whitespace
-          state = STATE.ARG_END;
-        } else if (curr === ',') {
-          state = STATE.ARG_START;
-        } else if (curr === '*') {
-          // comment end;
-        }
-        break;
-
-      case STATE.ARG_END:
         if (curr === ',') {
           state = STATE.ARG_START;
-        } else if (curr.match(/\s/)) {
-          // ignore whitespace
+        } else{
+          args[argIndex] += curr;
         }
         break;
     }

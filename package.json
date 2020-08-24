@@ -3,7 +3,7 @@
 	"displayName": "Align Args",
 	"description": "Align arguments in single line function calls",
 	"icon": "images/alignargsIcon.png",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -32,10 +32,25 @@
 		"configuration": {
 			"title": "Align Args",
 			"properties": {
-				"alignargs.rightAlignDecimal": {
-					"type": "boolean",
-					"default": true,
-					"description": "Right align decimal values"
+				"alignargs.alignDecimal": {
+					"type": "string",
+					"default": "right",
+					"description": "Align type of decimal values",
+					"enum" : [
+						"left",
+						"center",
+						"right"
+					]
+				},
+				"alignargs.alignNonDecimal": {
+					"type": "string",
+					"default": "left",
+					"description": "Align type of non-decimal values",
+					"enum" : [
+						"left",
+						"center",
+						"right"
+					]
 				},
 				"alignargs.formatHex": {
 					"type": "boolean",
@@ -47,9 +62,9 @@
 					"default": "space",
 					"enum": [
 						"space",
-						"tab"
+						"tab(experimental)"
 					],
-					"description": "Pad with space(recommended) or tab(width 4. may not work properly)"
+					"description": "Pad with space(recommended) or tab(width 4. overrides left/center/right align)"
 				},
 				"alignargs.replaceArg": {
 					"type": "object",

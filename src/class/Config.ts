@@ -1,12 +1,14 @@
 export class Config {
-  rightAlignDecimal: boolean;
+  alignDecimal: string;
+  alignNonDecimal: string;
   replace: { [key: string]: string };
   trimTrail: boolean;
   formatHex: boolean;
   padType: string;
 
-  constructor(rightAlignDecimal: boolean, replace: { [key: string]: string }, trimTrail: boolean, formatHex: boolean, padType: string) {
-    this.rightAlignDecimal = rightAlignDecimal;
+  constructor(alignDecimal: string, alignNonDecimal: string, replace: { [key: string]: string }, trimTrail: boolean, formatHex: boolean, padType: string) {
+    this.alignDecimal = alignDecimal;
+    this.alignNonDecimal = alignNonDecimal;
     this.replace = replace;
     this.trimTrail = trimTrail;
     this.formatHex = formatHex;

@@ -13,6 +13,7 @@ export function DoAlign(input: string, config: Config): string {
   var lines = input.split(/\r?\n/);
   var parsedRefComment: string[] = []; // only string of args
   var refCommentLineIndex = -1;
+  var isMultilineComment = false;
 
   // parsing part
   lines.forEach((line, index) => {
@@ -22,7 +23,15 @@ export function DoAlign(input: string, config: Config): string {
 
       if (parsedRefComment.length !== 0) {
         findingRefComment = false;
-        maxArgLengthArr = parsedRefComment.map(arg => arg.length);
+        
+        if(parsedRefComment[parsedRefComment.length - 1].trim().slice(-2) === '*/'){
+          parsedRefComment[parsedRefComment.length - 1] = parsedRefComment[parsedRefComment.length - 1].trim().slice(0, -2);
+          isMultilineComment = true;
+        } else {
+          isMultilineComment = false;
+        }
+
+        maxArgLengthArr = parsedRefComment.map(arg => arg.trim().length);
         refCommentLineIndex = index;
         parsedLines[index] = new FuncCall('', '', [], '');
         return;
@@ -86,11 +95,37 @@ export function DoAlign(input: string, config: Config): string {
       line.args = line.args.map((arg, argIndex) => {
 
         if (config.padType === 'space') { // pad type is space
-          if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
-            return arg.padStart(maxArgLengthArr[argIndex], ' ');
-          }
-          else {
-            return arg.padEnd(maxArgLengthArr[argIndex], ' ');
+
+          if(!arg.trim().match(/\D/)){  // if decimal
+            switch(config.alignDecimal){
+              case 'left':
+                return arg.padEnd(maxArgLengthArr[argIndex]);
+
+              case 'center':
+                return arg.padStart((maxArgLengthArr[argIndex] + arg.length )/2).padEnd(maxArgLengthArr[argIndex]);
+
+              case 'right':
+                return arg.padStart(maxArgLengthArr[argIndex]);
+
+                default:
+                return arg.padStart(maxArgLengthArr[argIndex]);
+            }
+          } else {
+
+            switch(config.alignNonDecimal){
+              case 'left':
+                return arg.padEnd(maxArgLengthArr[argIndex]);
+
+              case 'center':
+                return arg.padStart((maxArgLengthArr[argIndex] + arg.length )/2).padEnd(maxArgLengthArr[argIndex]);
+
+              case 'right':
+                return arg.padStart(maxArgLengthArr[argIndex]);
+
+                default:
+                return arg.padStart(maxArgLengthArr[argIndex]);
+            }
+
           }
         } else { // pad type is tab
           /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,8 +135,8 @@ export function DoAlign(input: string, config: Config): string {
           if (argIndex === 0) { // first argument, calculate function name length
             var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex]) / tabSize) * tabSize;
 
-            if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
-              return arg.padStart(targetWidth - maxFuncNameLength - 1, ' ') + '\t';
+            if (config.alignDecimal === 'right' && !arg.trim().match(/\D/)) {  // right align decimal
+              return arg.padStart(targetWidth - maxFuncNameLength - 1) + '\t';
             }
             else {
               return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - maxFuncNameLength - 1) / tabSize) + 1);
@@ -110,8 +145,8 @@ export function DoAlign(input: string, config: Config): string {
           else {
             var targetWidth = Math.ceil(maxArgLengthArr[argIndex] / tabSize) * tabSize;  // target width 
 
-            if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
-              return arg.padStart(targetWidth, ' ') + '\t';
+            if (config.alignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
+              return arg.padStart(targetWidth) + '\t';
             }
             else {
               return arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinStringTab.length) / 4) + 1);  // after second argument 
@@ -133,9 +168,16 @@ export function DoAlign(input: string, config: Config): string {
   });
 
   if (parsedRefComment.length !== 0) {
+
+
+
     if (config.padType === 'space') {
-      outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + 
-      parsedRefComment.map((arg, index) => arg.padEnd(maxArgLengthArr[index])).join(' , ').padEnd(minIndent.length + maxFuncNameLength + maxArgLengthArr.reduce((a, b) => a+b, 0), ' ') + ' */';  
+      outputLines[refCommentLineIndex] = minIndent + parsedRefComment[-1] + ' '.repeat(maxFuncNameLength - parsedRefComment[-1].length + 1) + 
+      parsedRefComment.map((arg, index) => arg.trim().padEnd(maxArgLengthArr[index])).join(' , ').padEnd(minIndent.length + maxFuncNameLength + maxArgLengthArr.reduce((a, b) => a+b, 0)) ;  
+      if(isMultilineComment) {
+        outputLines[refCommentLineIndex] += '*/';
+      }
+
     } else{
       parsedRefComment.forEach((arg, argIndex, args)=>{
         const tabSize = 4;
@@ -143,27 +185,27 @@ export function DoAlign(input: string, config: Config): string {
 
           var targetWidth = Math.ceil((maxFuncNameLength + 1 + maxArgLengthArr[argIndex]) / tabSize) * tabSize;
 
-          if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
-            args[argIndex] = arg.padStart(targetWidth - maxFuncNameLength - 1, ' ') + '\t';
+          if (config.alignDecimal === 'right' && !arg.trim().match(/\D/)) {  // right align decimal
+            args[argIndex] = arg.padStart(targetWidth - maxFuncNameLength - 1) + '\t';
           }
           else {
-            console.log(arg);
             args[argIndex]  =  arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - maxFuncNameLength - 1) / tabSize) + 1);
-            console.log(args[argIndex] + 'end');
           }
         } else{
           var targetWidth = Math.ceil(maxArgLengthArr[argIndex] / tabSize) * tabSize;  // target width 
 
-          if (config.rightAlignDecimal && !arg.trim().match(/\D/)) {  // right align decimal
-            args[argIndex] = arg.padStart(targetWidth, ' ') + '\t';
+          if (config.alignDecimal === 'right' && !arg.trim().match(/\D/)) {  // right align decimal
+            args[argIndex] = arg.padStart(targetWidth) + '\t';
           }
           else {
             args[argIndex] = arg + '\t'.repeat(Math.ceil((targetWidth - arg.length - joinStringTab.length) / 4) + 1);  // after second argument 
           }
         }
       });
-      console.log(parsedRefComment);
-      outputLines[refCommentLineIndex] = minIndent + '/*' + ' '.repeat(maxFuncNameLength - 1) + parsedRefComment.join(joinStringTab) + ' */';  
+      outputLines[refCommentLineIndex] = minIndent + parsedRefComment[-1] + ' '.repeat(maxFuncNameLength - parsedRefComment[-1].length + 1) + parsedRefComment.map((arg)=>arg.trim()).join(joinStringTab) ;  
+      if(isMultilineComment) {
+        outputLines[refCommentLineIndex] += '*/';
+      }
 
     }
 }

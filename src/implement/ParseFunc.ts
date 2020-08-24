@@ -43,7 +43,7 @@ export function ParseFunc(line: string): FuncCall {
         } break;
 
       case STATE.FUNC_NAME:
-        if (curr.match(/[\w_]/)) { // alphanumeric, underscore
+        if (curr.match(/[\w_\.]/)) { // alphanumeric, underscore, dot(for method)
           funcName += curr;
         } else if (curr.match(/\s/)) {  // whitespace
           state = STATE.FUNC_NAME_END;

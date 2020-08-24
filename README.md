@@ -18,9 +18,10 @@ option 2) Right click on selected text, click 'align args' on context menu.
 
 
 (Optional) Reference comment line   
-You can list argument names in the first comment line which will align together.
+You can list argument names in the first comment line which will be aligned together.
 
 # Features
 Format hex ( 0XabU => 0xABu)  
-Right align decimal  
+Left/Center/Right align for decimal values  
+Left/Center/Right align for non-decimal values  
 Replace arguments 

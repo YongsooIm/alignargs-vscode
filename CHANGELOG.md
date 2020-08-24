@@ -1,6 +1,9 @@
 # Change Log
 
-All notable changes to the "alignargs" extension will be documented in this file.
+## [0.1.3]
+
+- Add option align left/center/right for decimal/non-decimal
+- Add support for python style reference comment line
 
 ## [0.1.2]
 

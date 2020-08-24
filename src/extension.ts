@@ -19,14 +19,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 		var	wsConfig = vscode.workspace.getConfiguration("alignargs");
 
-		var rightAlignDecimal: boolean|undefined = wsConfig.get('rightAlignDecimal');
+		var alignDecimal: string|undefined = wsConfig.get('alignDecimal');
+		var alignNonDecimal: string|undefined = wsConfig.get('alignNonDecimal');
 		var replaceArg :{[key: string]: string} | undefined = wsConfig.get('replaceArg');
 		var trimTrail : boolean | undefined = wsConfig.get('trimTrail');
 		var formatHex : boolean | undefined = wsConfig.get('formatHex');
 		var padType : string | undefined = wsConfig.get('padType');
 
 		var config = new Config(
-			rightAlignDecimal !== undefined ? rightAlignDecimal : true, 
+			alignDecimal !== undefined ? alignDecimal : 'right', 
+			alignNonDecimal !== undefined ? alignNonDecimal : 'left', 
 			replaceArg !== undefined ? replaceArg : {},
 			trimTrail !== undefined? trimTrail : true,
 			formatHex !== undefined? formatHex : true,
@@ -47,7 +49,9 @@ export function activate(context: vscode.ExtensionContext) {
 			var selectedText = editor.document.getText(selection);
 			var outputText = DoAlign(selectedText, config);
 
-			editor.edit(editBuilder => editBuilder.replace(selection, outputText));
+			if(selectedText !== outputText){
+				editor.edit(editBuilder => editBuilder.replace(selection, outputText));
+			}
 		}
 	});
 
